@@ -6,8 +6,8 @@ namespace tcortega.NubankClient.Exceptions
 {
     class NuException : Exception
     {
-        public NuException(string Message) 
-            : base(Message)
+        public NuException(string message) 
+            : base(message)
         {
 
         }
