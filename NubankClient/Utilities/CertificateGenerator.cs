@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using tcortega.NubankClient.Exceptions;
 using tcortega.NubankClient.Helpers;
-using tcortega.NubankClient.Models;
+using tcortega.NubankClient.DTOs;
 
 namespace tcortega.NubankClient.Utilities
 {

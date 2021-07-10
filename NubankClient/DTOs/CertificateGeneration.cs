@@ -1,4 +1,4 @@
-﻿namespace tcortega.NubankClient.Models
+﻿namespace tcortega.NubankClient.DTOs
 {
     class CertificateGeneration
     {

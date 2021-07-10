@@ -3,7 +3,7 @@ using System.IO;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using tcortega.NubankClient.Exceptions;
-using tcortega.NubankClient.Models;
+using tcortega.NubankClient.DTOs;
 using tcortega.NubankClient.Utilities;
 
 namespace tcortega.NubankClient

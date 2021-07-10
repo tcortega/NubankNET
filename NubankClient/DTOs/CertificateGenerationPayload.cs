@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace tcortega.NubankClient.Models
+namespace tcortega.NubankClient.DTOs
 {
     class CertificateGenerationPayload
     {

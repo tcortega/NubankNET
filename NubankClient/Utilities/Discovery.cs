@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using tcortega.NubankClient.Models;
+using tcortega.NubankClient.DTOs;
 
 namespace tcortega.NubankClient.Utilities
 {
