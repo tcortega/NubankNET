@@ -11,53 +11,6 @@ namespace tcortega.NubankClient.Utilities
     class RSAKeys
     {
         /// <summary>
-        /// Export private (including public) key from MS RSACryptoServiceProvider into OpenSSH PEM string
-        /// slightly modified from https://stackoverflow.com/a/23739932/2860309
-        /// </summary>
-        /// <param name="csp"></param>
-        /// <returns></returns>
-        public static string ExportPrivateKey(RSACryptoServiceProvider csp)
-        {
-            StringWriter outputStream = new StringWriter();
-            if (csp.PublicOnly) throw new ArgumentException("CSP does not contain a private key", "csp");
-            var parameters = csp.ExportParameters(true);
-            using (var stream = new MemoryStream())
-            {
-                var writer = new BinaryWriter(stream);
-                writer.Write((byte)0x30); // SEQUENCE
-                using (var innerStream = new MemoryStream())
-                {
-                    var innerWriter = new BinaryWriter(innerStream);
-                    EncodeIntegerBigEndian(innerWriter, new byte[] { 0x00 }); // Version
-                    EncodeIntegerBigEndian(innerWriter, parameters.Modulus);
-                    EncodeIntegerBigEndian(innerWriter, parameters.Exponent);
-                    EncodeIntegerBigEndian(innerWriter, parameters.D);
-                    EncodeIntegerBigEndian(innerWriter, parameters.P);
-                    EncodeIntegerBigEndian(innerWriter, parameters.Q);
-                    EncodeIntegerBigEndian(innerWriter, parameters.DP);
-                    EncodeIntegerBigEndian(innerWriter, parameters.DQ);
-                    EncodeIntegerBigEndian(innerWriter, parameters.InverseQ);
-                    var length = (int)innerStream.Length;
-                    EncodeLength(writer, length);
-                    writer.Write(innerStream.GetBuffer(), 0, length);
-                }
-
-                var base64 = Convert.ToBase64String(stream.GetBuffer(), 0, (int)stream.Length).ToCharArray();
-                // WriteLine terminates with \r\n, we want only \n
-                outputStream.Write("-----BEGIN RSA PRIVATE KEY-----\n");
-                // Output as Base64 with lines chopped at 64 characters
-                for (var i = 0; i < base64.Length; i += 64)
-                {
-                    outputStream.Write(base64, i, Math.Min(64, base64.Length - i));
-                    outputStream.Write("\n");
-                }
-                outputStream.Write("-----END RSA PRIVATE KEY-----");
-            }
-
-            return outputStream.ToString();
-        }
-
-        /// <summary>
         /// Export public key from MS RSACryptoServiceProvider into OpenSSH PEM string
         /// slightly modified from https://stackoverflow.com/a/28407693
         /// </summary>
