@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 using tcortega.NubankClient.Models;
 using System.Threading.Tasks;
 
-namespace tcortega.NubankClient.Utils
+namespace tcortega.NubankClient.Utilities
 {
     class Discovery
     {
