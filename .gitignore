@@ -365,3 +365,4 @@ FodyWeavers.xsd
 # API
 *.p12
 ./*.json
+Testing
