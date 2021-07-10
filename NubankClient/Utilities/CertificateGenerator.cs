@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using tcortega.NubankClient.Exceptions;
 using tcortega.NubankClient.Helpers;
 using tcortega.NubankClient.Models;
 using tcortega.NubankClient.Utilities;
 
-namespace tcortega.NubankClient.Utils
+namespace tcortega.NubankClient.Utilities
 {
     class CertificateGenerator
     {
@@ -22,14 +26,16 @@ namespace tcortega.NubankClient.Utils
         private Discovery _discovery;
         private string _baseUrl;
         private NuHttp _nuHttp;
+        private string _encryptedCode;
 
-        public CertificateGenerator(string cpf, string password, string certPath, NuHttp nuHttp)
+        public CertificateGenerator(string cpf, string password, string certPath, NuHttp nuHttp, Discovery discovery)
         {
             _cpf = cpf;
             _password = password;
+            _deviceId = Generators.RandomString(12);
             _rsaKey1 = new RSACryptoServiceProvider(2048);
             _rsaKey2 = new RSACryptoServiceProvider(2048);
-            _discovery = new Discovery(nuHttp);
+            _discovery = discovery;
             _nuHttp = nuHttp;
             _baseUrl = _discovery.AppEndPoints.gen_certificate;
         }
@@ -39,24 +45,70 @@ namespace tcortega.NubankClient.Utils
             return File.Exists(path);
         }
 
-        public async Task Request2FA()
+        public async Task<string> Request2FA()
         {
-            var response = await _nuHttp.Client.PostAsync(_baseUrl, GetPayload());
+            using var response = await _nuHttp.Client.PostAsJsonAsync(_baseUrl, GetPayload());
+
+            if ((int)response.StatusCode != 401 || !response.Headers.Contains("WWW-Authenticate"))
+                throw new NuException("Authentication code request failed.");
+
+            var authHeader = response.Headers.WwwAuthenticate.ToString();
+            var parsedArgs = ParseArgsFromAuthHeader(authHeader);
+
+            _encryptedCode = parsedArgs["encryptedCode"];
+
+            return parsedArgs["mail"];
         }
 
-        private JsonContent<LoginPayload> GetPayload()
+        public async Task<byte[]> ExchangeCerts(string code)
         {
-            var loginModel = new LoginPayload()
+            if (_encryptedCode is null)
+                throw new NuException("No encrypted code was found. There was an error in the certificate generation.");
+
+            var payload = GetPayload(code);
+            using var response = await _nuHttp.Client.PostAsJsonAsync(_baseUrl, payload);
+
+            if (!response.IsSuccessStatusCode)
+                throw new NuException(await response.Content.ReadAsStringAsync());
+
+            var content = await response.Content.ReadFromJsonAsync<CertificateGeneration>();
+            var certBytes = Encoding.ASCII.GetBytes(content.certificate);
+            var certificate = new X509Certificate2(certBytes);
+
+            return GetPKCS12Cert(certificate);
+        }
+
+        private CertificateGenerationPayload GetPayload(string code = null)
+        {
+            return new CertificateGenerationPayload()
             {
                 login = _cpf,
                 password = _password,
                 device_id = _deviceId,
                 model = $"NubankNET Client ({_deviceId})",
                 public_key = RSAKeys.ExportPublicKey(_rsaKey1),
-                public_key_crypto = RSAKeys.ExportPublicKey(_rsaKey2)
+                public_key_crypto = RSAKeys.ExportPublicKey(_rsaKey2),
+                code = code,
+                encrypted_code = _encryptedCode
             };
+        }
 
-            return new JsonContent<LoginPayload>(loginModel);
+        private static Dictionary<string, string> ParseArgsFromAuthHeader(string header)
+        {
+            var encryptedCode = Parsers.ParseBetween(header, "encrypted-code=\"", "\"").FirstOrDefault();
+            var mail = Parsers.ParseBetween(header, "sent-to=\"", "\"").FirstOrDefault();
+
+            return new Dictionary<string, string>()
+            {
+                { "encryptedCode", encryptedCode },
+                { "mail", mail }
+            };
+        }
+
+        private byte[] GetPKCS12Cert(X509Certificate2 cert)
+        {
+            var newCert = cert.CopyWithPrivateKey(_rsaKey1);
+            return newCert.Export(X509ContentType.Pkcs12);
         }
     }
 }
