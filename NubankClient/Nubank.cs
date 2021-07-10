@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using tcortega.NubankClient.Exceptions;
-using tcortega.NubankClient.Helpers;
 using tcortega.NubankClient.Models;
 using tcortega.NubankClient.Utilities;
 

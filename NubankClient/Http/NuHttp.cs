@@ -2,21 +2,12 @@
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
-using tcortega.NubankClient.Exceptions;
 
 namespace tcortega.NubankClient.Utilities
 {
     class NuHttp
     {
         public readonly HttpClient Client;
-
-        //private Dictionary<string, string> _defaultHeaders = new Dictionary<string, string>()
-        //    {
-        //        { "Content-Type", "application/json" },
-        //        { "X-Correlation-Id", "WEB-APP.pewW9" },
-        //        { "User-Agent", "NubankNET Client - https://github.com/tcortega/NubankNET" }
-        //    };
-
         public NuHttp()
         {
             Client = new HttpClient();

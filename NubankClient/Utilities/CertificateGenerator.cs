@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using tcortega.NubankClient.Exceptions;
 using tcortega.NubankClient.Helpers;
 using tcortega.NubankClient.Models;
-using tcortega.NubankClient.Utilities;
 
 namespace tcortega.NubankClient.Utilities
 {

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using tcortega.NubankClient.Models;
-using System.Threading.Tasks;
 
 namespace tcortega.NubankClient.Utilities
 {
