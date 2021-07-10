@@ -364,5 +364,5 @@ FodyWeavers.xsd
 
 # API
 *.p12
-./*.json
-Testing
+./src/*.json
+./src/Testing
