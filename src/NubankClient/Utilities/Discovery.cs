@@ -10,6 +10,7 @@ namespace tcortega.NubankClient.Utilities
 
         public Discovery(NuHttp nuHttp)
         {
+            // TO-DO: Remove this blocking call from the ctor
             AppEndPoints = nuHttp.Client.GetFromJsonAsync<AppEndpoints>(DISCOVERY_APP_URL).GetAwaiter().GetResult();
         }
     }
