@@ -1,8 +1,12 @@
-﻿namespace tcortega.NubankClient.DTOs
+﻿using System.Text.Json.Serialization;
+
+namespace tcortega.NubankClient.DTOs
 {
     class CertificateGeneration
     {
-        public string certificate { get; set; }
-        public string certificate_crypto { get; set; }
+        [JsonPropertyName("certificate")]
+        public string Certificate { get; set; }
+        [JsonPropertyName("certificate_crypto")]
+        public string CertificateCrypto { get; set; }
     }
 }

@@ -1,11 +1,18 @@
-﻿namespace tcortega.NubankClient.DTOs
+﻿using System.Text.Json.Serialization;
+
+namespace tcortega.NubankClient.DTOs
 {
     class LoginPayload
     {
-        public string grant_type { get; set; }
-        public string client_id { get; set; }
-        public string client_secret { get; set; }
-        public string login { get; set; }
-        public string password { get; set; }
+        [JsonPropertyName("grant_type")]
+        public string GrantType { get; set; }
+        [JsonPropertyName("client_id")]
+        public string ClientId { get; set; }
+        [JsonPropertyName("client_secret")]
+        public string ClientSecret { get; set; }
+        [JsonPropertyName("login")]
+        public string Login { get; set; }
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
     }
 }

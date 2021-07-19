@@ -1,8 +1,12 @@
-﻿namespace tcortega.NubankClient.DTOs
+﻿using System.Text.Json.Serialization;
+
+namespace tcortega.NubankClient.DTOs
 {
     class AppEndpoints
     {
-        public string gen_certificate { get; set; }
-        public string token { get; set; }
+        [JsonPropertyName("gen_certificate")]
+        public string GenCertificate { get; set; }
+        [JsonPropertyName("token")]
+        public string Token { get; set; }
     }
 }

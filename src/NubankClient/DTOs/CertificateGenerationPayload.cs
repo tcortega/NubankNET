@@ -4,15 +4,23 @@ namespace tcortega.NubankClient.DTOs
 {
     class CertificateGenerationPayload
     {
-        public string login { get; set; }
-        public string password { get; set; }
-        public string public_key { get; set; }
-        public string public_key_crypto { get; set; }
-        public string model { get; set; }
-        public string device_id { get; set; }
+        [JsonPropertyName("login")]
+        public string Login { get; set; }
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+        [JsonPropertyName("public_key")]
+        public string PublicKey { get; set; }
+        [JsonPropertyName("public_key_crypto")]
+        public string PublicKeyCrypto { get; set; }
+        [JsonPropertyName("model")]
+        public string Model { get; set; }
+        [JsonPropertyName("device_id")]
+        public string DeviceId { get; set; }
+        [JsonPropertyName("code")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string code { get; set; }
+        public string Code { get; set; }
+        [JsonPropertyName("encrypted_code")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string encrypted_code { get; set; }
+        public string EncryptedCode { get; set; }
     }
 }
