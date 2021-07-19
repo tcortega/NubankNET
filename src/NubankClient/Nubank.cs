@@ -6,17 +6,25 @@ using tcortega.NubankClient.Exceptions;
 using tcortega.NubankClient.DTOs;
 using tcortega.NubankClient.Utilities;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace tcortega.NubankClient
 {
     public class Nubank
     {
-        private string _cpf;
-        private string _password;
-        private string _certPath;
-        private string _baseUrl;
+        private readonly string _cpf;
+        private readonly string _password;
+        private readonly string _certPath;
+        private readonly string _loginUrl;
+        private readonly Discovery _discovery;
         private NuHttp _nuHttp;
-        private Discovery _discovery;
+
+        private string _feedUrl;
+        private string _billsUrl;
+        private string _customerUrl;
+        private string _queryUrl;
+        private string _revokeTokenUrl;
+
 
         public Nubank(string cpf, string password, string certPath)
             : this(cpf, password, certPath, new NuHttp())
@@ -31,7 +39,7 @@ namespace tcortega.NubankClient
             _certPath = certPath;
             _nuHttp = nuHttp;
             _discovery = new Discovery(nuHttp);
-            _baseUrl = _discovery.AppEndPoints.Token;
+            _loginUrl = _discovery.AppEndPoints.Token;
         }
 
         public async Task LoginAsync()
@@ -41,7 +49,7 @@ namespace tcortega.NubankClient
 
             _nuHttp = new NuHttp(_certPath);
 
-            using var response = await _nuHttp.Client.PostAsJsonAsync(_baseUrl, GetPayload());
+            using var response = await _nuHttp.Client.PostAsJsonAsync(_loginUrl, GetPayload());
             if (!response.IsSuccessStatusCode)
                 throw new NuRequestException((int)response.StatusCode, await response.Content.ReadAsStringAsync());
 
@@ -80,7 +88,17 @@ namespace tcortega.NubankClient
         private void SaveAuthData(LoginResponse response)
         {
             _nuHttp.Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {response.AccessToken}");
+            SaveEndpoints(response);
+        }
 
+        private void SaveEndpoints(LoginResponse response)
+        {
+            var links = response.Links;
+            _feedUrl = links.TryGetValue("magnitude", out var link) ? link.Href : links["events"].Href;
+            _billsUrl = links["bills_summary"].Href;
+            _customerUrl = links["customer"].Href;
+            _queryUrl = links["ghostflame"].Href;
+            _revokeTokenUrl = links["revoke_token"].Href;
         }
 
         private LoginPayload GetPayload()
