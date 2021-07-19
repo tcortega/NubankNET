@@ -33,7 +33,7 @@ namespace tcortega.NubankClient.Utilities
             _rsaKey2 = new RSACryptoServiceProvider(2048);
             _discovery = discovery;
             _nuHttp = nuHttp;
-            _baseUrl = _discovery.AppEndPoints.gen_certificate;
+            _baseUrl = _discovery.AppEndPoints.GenCertificate;
         }
 
         public static bool CertificateAlreadyExists(string path)
@@ -68,7 +68,7 @@ namespace tcortega.NubankClient.Utilities
                 throw new NuException(await response.Content.ReadAsStringAsync());
 
             var content = await response.Content.ReadFromJsonAsync<CertificateGeneration>();
-            var certBytes = Encoding.ASCII.GetBytes(content.certificate);
+            var certBytes = Encoding.ASCII.GetBytes(content.Certificate);
             var certificate = new X509Certificate2(certBytes);
 
             return GetPKCS12Cert(certificate);
@@ -78,14 +78,14 @@ namespace tcortega.NubankClient.Utilities
         {
             return new CertificateGenerationPayload()
             {
-                login = _cpf,
-                password = _password,
-                device_id = _deviceId,
-                model = $"NubankNET Client ({_deviceId})",
-                public_key = RSAKeys.ExportPublicKey(_rsaKey1),
-                public_key_crypto = RSAKeys.ExportPublicKey(_rsaKey2),
-                code = code,
-                encrypted_code = _encryptedCode
+                Login = _cpf,
+                Password = _password,
+                DeviceId = _deviceId,
+                Model = $"NubankNET Client ({_deviceId})",
+                PublicKey = RSAKeys.ExportPublicKey(_rsaKey1),
+                PublicKeyCrypto = RSAKeys.ExportPublicKey(_rsaKey2),
+                Code = code,
+                EncryptedCode = _encryptedCode
             };
         }
 

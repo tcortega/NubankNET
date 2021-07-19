@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using tcortega.NubankClient.Exceptions;
 using tcortega.NubankClient.DTOs;
 using tcortega.NubankClient.Utilities;
+using System.Text.Json;
 
 namespace tcortega.NubankClient
 {
@@ -30,21 +31,22 @@ namespace tcortega.NubankClient
             _certPath = certPath;
             _nuHttp = nuHttp;
             _discovery = new Discovery(nuHttp);
-            _baseUrl = _discovery.AppEndPoints.token;
+            _baseUrl = _discovery.AppEndPoints.Token;
         }
 
         public async Task LoginAsync()
         {
             if (!CertificateGenerator.CertificateAlreadyExists(_certPath))
-            {
                 await GenerateCertificates();
-            }
+
             _nuHttp = new NuHttp(_certPath);
 
-            var response = await _nuHttp.Client.PostAsJsonAsync(_baseUrl, GetPayload());
+            using var response = await _nuHttp.Client.PostAsJsonAsync(_baseUrl, GetPayload());
             if (!response.IsSuccessStatusCode)
                 throw new NuRequestException((int)response.StatusCode, await response.Content.ReadAsStringAsync());
 
+            var jsonResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
+            SaveAuthData(jsonResponse);
         }
 
         private async Task GenerateCertificates()
@@ -75,15 +77,21 @@ namespace tcortega.NubankClient
             File.WriteAllBytes(_certPath, bytes);
         }
 
+        private void SaveAuthData(LoginResponse response)
+        {
+            _nuHttp.Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {response.AccessToken}");
+
+        }
+
         private LoginPayload GetPayload()
         {
             return new LoginPayload()
             {
-                grant_type = "password",
-                client_id = "legacy_client_id",
-                client_secret = "legacy_client_secret",
-                login = _cpf,
-                password = _password
+                GrantType = "password",
+                ClientId = "legacy_client_id",
+                ClientSecret = "legacy_client_secret",
+                Login = _cpf,
+                Password = _password
             };
         }
     }
