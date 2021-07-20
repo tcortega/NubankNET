@@ -42,6 +42,7 @@ namespace tcortega.NubankClient
             _loginUrl = _discovery.AppEndPoints.Token;
         }
 
+        #region  Api Methods
         public async Task LoginAsync()
         {
             if (!CertificateGenerator.CertificateAlreadyExists(_certPath))
@@ -57,6 +58,14 @@ namespace tcortega.NubankClient
             SaveAuthData(jsonResponse);
         }
 
+        public async Task GetCardFeed()
+        {
+            using var response = await _nuHttp.Client.GetAsync(_feedUrl);
+            var content = response.Content.ReadAsStringAsync();
+        }
+        #endregion
+
+        #region Private Auth/Utilities methods
         private async Task GenerateCertificates()
         {
             var certGenerator = new CertificateGenerator(_cpf, _password, _certPath, _nuHttp, _discovery);
@@ -80,21 +89,19 @@ namespace tcortega.NubankClient
             SaveCert(pkcs12Cert);
         }
 
-        private void SaveCert(byte[] bytes)
-        {
-            File.WriteAllBytes(_certPath, bytes);
-        }
+        private void SaveCert(byte[] bytes) 
+            => File.WriteAllBytes(_certPath, bytes);
 
         private void SaveAuthData(LoginResponse response)
         {
-            _nuHttp.Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {response.AccessToken}");
+            _nuHttp.AddHeader("Authorization", $"Bearer {response.AccessToken}");
             SaveEndpoints(response);
         }
 
         private void SaveEndpoints(LoginResponse response)
         {
             var links = response.Links;
-            _feedUrl = links.TryGetValue("magnitude", out var link) ? link.Href : links["events"].Href;
+            _feedUrl = links.TryGetValue("events", out var link) ? link.Href : links["magnitude"].Href;
             _billsUrl = links["bills_summary"].Href;
             _customerUrl = links["customer"].Href;
             _queryUrl = links["ghostflame"].Href;
@@ -112,5 +119,6 @@ namespace tcortega.NubankClient
                 Password = _password
             };
         }
+        #endregion
     }
 }

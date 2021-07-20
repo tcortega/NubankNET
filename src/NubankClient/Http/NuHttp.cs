@@ -24,9 +24,9 @@ namespace tcortega.NubankClient.Utilities
 
         private void SetDefaultHeaders()
         {
-            Client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-            Client.DefaultRequestHeaders.TryAddWithoutValidation("X-Correlation-Id", "WEB-APP.pewW9");
-            Client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "NubankNET Client");
+            AddHeader("Content-Type", "application/json");
+            AddHeader("X-Correlation-Id", "WEB-APP.pewW9");
+            AddHeader("User-Agent", "NubankNET Client");
         }
 
         private static HttpClientHandler CreateHandlerWithCertificate(byte[] certBytes)
@@ -39,21 +39,9 @@ namespace tcortega.NubankClient.Utilities
         }
 
         public void AddHeader(string name, string value)
-        {
-            Client.DefaultRequestHeaders.Add(name, value);
-        }
+            => Client.DefaultRequestHeaders.TryAddWithoutValidation(name, value);
 
-        public void AddHeader(Dictionary<string, string> headers)
-        {
-            foreach (KeyValuePair<string, string> header in headers)
-            {
-                AddHeader(header.Key, header.Value);
-            }
-        }
-
-        public void RemoveHeader(string name)
-        {
-            Client.DefaultRequestHeaders.Remove(name);
-        }
+        public void RemoveHeader(string name) 
+            => Client.DefaultRequestHeaders.Remove(name);
     }
 }
