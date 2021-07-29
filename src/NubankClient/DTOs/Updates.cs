@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace tcortega.NubankClient.DTOs
 {
-    class Updates
+    public class Updates
     {
         [JsonPropertyName("href")]
         public Uri Href { get; set; }

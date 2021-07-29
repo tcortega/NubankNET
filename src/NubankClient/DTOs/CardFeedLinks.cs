@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace tcortega.NubankClient.DTOs
 {
-    class CardFeedLinks
+    public class CardFeedLinks
     {
         [JsonPropertyName("updates")]
         public Updates Updates { get; set; }

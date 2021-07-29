@@ -2,7 +2,7 @@
 
 namespace tcortega.NubankClient.DTOs
 {
-    class EventLinks
+    public class EventLinks
     {
         [JsonPropertyName("self")]
         public Updates Self { get; set; }

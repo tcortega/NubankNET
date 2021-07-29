@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
-using tcortega.NubankClient.Enums;
 using tcortega.NubankClient.Utilities;
 
 namespace tcortega.NubankClient.DTOs
 {
-    class Fx
+    public class Fx
     {
         [JsonPropertyName("currency_origin")]
         public string CurrencyOrigin { get; set; }

@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using tcortega.NubankClient.Enums;
 using tcortega.NubankClient.Utilities;
 
 namespace tcortega.NubankClient.DTOs
 {
-    class Event
+    public class Event
     {
         [JsonPropertyName("description")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Description { get; set; }
 
         [JsonPropertyName("category")]
-        [JsonConverter(typeof(NubankStringEnumConverter<Category>))]
-        public Category Category { get; set; }
+        public string Category { get; set; }
 
         [JsonPropertyName("amount")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -23,9 +21,8 @@ namespace tcortega.NubankClient.DTOs
         public DateTimeOffset Time { get; set; }
 
         [JsonPropertyName("source")]
-        [JsonConverter(typeof(NubankNullableStringEnumConverter<Source?>))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Source? Source { get; set; }
+        public string Source { get; set; }
 
         [JsonPropertyName("title")]
         public string Title { get; set; }

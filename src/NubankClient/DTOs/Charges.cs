@@ -2,7 +2,7 @@
 
 namespace tcortega.NubankClient.DTOs
 {
-    class Charges
+    public class Charges
     {
         [JsonPropertyName("count")]
         public long Count { get; set; }

@@ -1,19 +1,16 @@
 ﻿using System.Text.Json.Serialization;
-using tcortega.NubankClient.Enums;
 using tcortega.NubankClient.Utilities;
 
 namespace tcortega.NubankClient.DTOs
 {
-    class Details
+    public class Details
     {
         [JsonPropertyName("status")]
-        [JsonConverter(typeof(NubankNullableStringEnumConverter<Status?>))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Status? Status { get; set; }
+        public string Status { get; set; }
 
         [JsonPropertyName("subcategory")]
-        [JsonConverter(typeof(NubankStringEnumConverter<Subcategory>))]
-        public Subcategory Subcategory { get; set; }
+        public string Subcategory { get; set; }
 
         [JsonPropertyName("fx")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
