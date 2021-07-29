@@ -58,10 +58,9 @@ namespace tcortega.NubankClient
             SaveAuthData(jsonResponse);
         }
 
-        public async Task GetCardFeed()
+        public async Task<CardFeed> GetCardFeed()
         {
-            using var response = await _nuHttp.Client.GetAsync(_feedUrl);
-            var content = response.Content.ReadAsStringAsync();
+            return await _nuHttp.Client.GetFromJsonAsync<CardFeed>(_feedUrl);
         }
         #endregion
 
